@@ -50,6 +50,10 @@ header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-
   .main{padding:18px 16px 80px}
 }
 .view{display:none}
+/* Modo integrado: Pitinvest abre una pantalla suelta, sin cabecera ni menú */
+body.embed > header,body.embed .side{display:none}
+body.embed .shell{grid-template-columns:1fr;min-height:100vh}
+body.embed .main{max-width:none}
 .view.active{display:block}
 
 .page-title{font-family:var(--disp);font-weight:700;font-size:24px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:12px}
@@ -2771,6 +2775,14 @@ $('#btnRefEnv').addEventListener('click',cargarEntorno);
 chipWorker();
 if(!workerUrl){mostrarSinWorker();setTimeout(abrirModal,400);}
 initCartera();
+/* Modo integrado en Pitinvest: ?embed=busqueda|cartera|analisis|insiders|dividendos */
+(function(){
+  const v=new URLSearchParams(location.search).get('embed');
+  if(!v)return;
+  document.body.classList.add('embed');
+  const b=document.querySelector('.nav-item[data-view="'+v+'"]');
+  if(b)b.click();
+})();
 </script>
 </body>
 </html>
