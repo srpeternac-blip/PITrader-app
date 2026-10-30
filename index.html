@@ -6,7 +6,7 @@
 <title>PITrader App</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Archivo:wght@500;600;800&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0C0F14; --panel:#141A24; --panel2:#0F141D; --line:#232D3E;
@@ -54,6 +54,17 @@ header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-
 body.embed > header,body.embed .side{display:none}
 body.embed .shell{grid-template-columns:1fr;min-height:100vh}
 body.embed .main{max-width:none}
+/* Dentro de Pitinvest: sus colores y su letra */
+body.embed{--bg:#0b0a18;--panel:#141329;--panel2:#100f22;--line:#2b2a47;--ink:#f2f1f8;--ink2:#a9a7c4;--ink3:#75739a;
+  --amber:#f7b83c;--green:#4ade80;--red:#ff5f4d;--warn:#ff9f45;--blue:#6fb4ff;
+  --blue-d:#6fb4ff;--blue-bg:#141329;--blue-bg2:#1b1a33;--blue-line:#2b2a47;
+  --disp:'Archivo','Helvetica Neue',Arial,sans-serif;background:transparent;font-size:15px}
+body.embed .page-title{font-weight:800;font-size:clamp(25px,3.2vw,34px);letter-spacing:-.02em;text-transform:none}
+body.embed .card{border-radius:14px}
+/* Análisis dentro de la pantalla Análisis de Pitinvest: sin buscador ni cabecera repetidos */
+body.embed.solo-extra #view-analisis > .page-title,body.embed.solo-extra #view-analisis > .search-wrap,
+body.embed.solo-extra #a_rName,body.embed.solo-extra #a_rPrice,body.embed.solo-extra #a_rDesc{display:none!important}
+body.embed.solo-extra .main{padding-top:0}
 .view.active{display:block}
 
 .page-title{font-family:var(--disp);font-weight:700;font-size:24px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:12px}
@@ -2782,6 +2793,13 @@ initCartera();
   document.body.classList.add('embed');
   const b=document.querySelector('.nav-item[data-view="'+v+'"]');
   if(b)b.click();
+  // ?t=TICKER: análisis directo de esa empresa, sin buscador (lo pone Pitinvest)
+  const t=new URLSearchParams(location.search).get('t');
+  if(v==='analisis'&&t){document.body.classList.add('solo-extra');$('#a_inpTicker').value=t;analizarGeneral(t);}
+  // Le dice a Pitinvest cuánto mide, para que el marco crezca con el contenido
+  if(window.parent!==window&&'ResizeObserver' in window){
+    new ResizeObserver(()=>{try{window.parent.postMessage({pitrader:'alto',v,alto:(document.querySelector('.main')||document.body).scrollHeight+4},location.origin);}catch(e){}}).observe(document.querySelector('.main')||document.body);
+  }
 })();
 </script>
 </body>
